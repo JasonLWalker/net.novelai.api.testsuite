@@ -1,0 +1,20 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="">
+    <h1 class="text-center display-4">Welcome</h1>
+    @*
+    <p>
+        Key: @User.Claims.FirstOrDefault(c=>c.Type == "Nai.AccessKey")?.ToString();
+    </p>
+    <p>
+        Token: @User.Claims.FirstOrDefault(c => c.Type == "Nai.AccessToken")?.Value?.ToString();
+    </p>
+    *@
+    <ul>
+        <li><a href="~/examples/GenerateText">Generate Text</a></li>
+    </ul>
+</div>

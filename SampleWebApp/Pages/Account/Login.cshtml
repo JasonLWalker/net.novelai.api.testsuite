@@ -1,0 +1,84 @@
+﻿@page
+@using Microsoft.AspNetCore.Authentication
+@using System.Security.Claims
+@using net.novelai.authentication
+@functions {
+    [BindProperty]
+    public string? Username { get; set; }
+    [BindProperty]
+    public string? Password { get; set; }
+    [BindProperty]
+    public string? ReturnUrl { get; set; }
+
+    public async Task<IActionResult> OnPost()
+    {
+        if (!string.IsNullOrWhiteSpace(Username) || !string.IsNullOrWhiteSpace(Password))
+        {
+
+            try
+            {
+                var keys = Auth.AuthKeys(Username, Password);
+                if (!string.IsNullOrWhiteSpace(keys.AccessToken))
+                {
+                    //HttpContext.Session.SetString("User.AccessKey", keys.AccessKey);
+                    //HttpContext.Session.SetString("User.AccessToken", keys.AccessToken);
+
+                    var claims = new List<Claim>
+                    {
+                        new Claim("user", Username ?? ""),
+                        new Claim("role", "Member"),
+                        new Claim("Nai.AccessKey", keys.AccessKey),
+                        new Claim("Nai.EncryptionKey", Convert.ToBase64String(keys.EncryptionKey)),
+                        new Claim("Nai.AccessToken", keys.AccessToken)
+                    };
+
+                    await HttpContext.SignInAsync(new ClaimsPrincipal(new ClaimsIdentity(claims, "Cookies", "Nai.AccessKey", "Nai.AccessToken")));
+
+                    if (Url.IsLocalUrl(ReturnUrl))
+                    {
+                        return Redirect(ReturnUrl);
+                    }
+                    else
+                    {
+                        return Redirect("/");
+                    }
+
+                }
+            }
+            catch
+            {
+                // Do nothing
+            }
+        }
+        return Page();
+    }
+}
+@{
+    string message = "";
+    if (Request.HasFormContentType)
+    {
+        if (!string.IsNullOrWhiteSpace(Username) || !string.IsNullOrWhiteSpace(Password))
+        {
+            message = "Unable to log in.";
+        }
+        else
+        {
+        }
+    }
+}
+<div class="text-center">
+    <h1 class="display-4">Login</h1>
+    <p>
+        <div class="w-25 mx-auto">
+            <form method="post" >
+                <input type="text" name="Username" value="@Username" placeholder="Username" class="form-control mb-1" />
+                <input type="password" name="Password" value="@Password" placeholder="Password" class="form-control mb-1" />
+                @if(!string.IsNullOrWhiteSpace(message))
+                {
+                    <div class="text-danger">@message</div>
+                }
+                <button class="btn btn-primary">Log In</button>
+            </form>
+        </div>
+    </p>
+</div>

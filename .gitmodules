@@ -1,0 +1,3 @@
+[submodule "NovelAPI"]
+	path = NovelAPI
+	url = https://github.com/JasonLWalker/NovelAPI.git

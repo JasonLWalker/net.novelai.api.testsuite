@@ -1,0 +1,11 @@
+﻿@page
+@model GenerateTextModel
+@{
+
+}
+<form method="post">
+    <label>Prompt:</label>
+    <textarea name="GeneratedText" class="form-control mb-1" rows="10" readonly>@Model.GeneratedText</textarea>
+    <input type="text" name="PromptText" class="form-control mb-1" rows="10" />
+    <button class="btn btn-sm btn-primary">Generate Text</button>
+</form>
