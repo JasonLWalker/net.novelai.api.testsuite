@@ -150,6 +150,7 @@ namespace SampleWebApp.Pages.Examples
                     12
                 ],
                 return_full_text = false,
+                stop_sequences = [],
                 tail_free_sampling = 0.941,
                 temperature = 2.5,
                 typical_p = 0.969,
@@ -157,9 +158,10 @@ namespace SampleWebApp.Pages.Examples
                 use_string = false,
             };
 
-            NovelAPI? api = NovelAPI.NewNovelAiAPI(new Structs.AuthConfig() { EncryptionKey = EncryptionKey, AccessToken = AccessToken }, opts);
-            //api.currentParams = opts;
-            
+            NovelAPI? api = NovelAPI.NewNovelAiAPI(new Structs.AuthConfig() { EncryptionKey = EncryptionKey, AccessToken = AccessToken });
+            api.currentParams = opts;
+            //api.currentParams.stop_sequences = [];
+
             // [You are Rardon][You are talking to Maru via online chat]{Maru greets you
             GeneratedText += PromptText ?? "";
             if (api != null && !string.IsNullOrWhiteSpace(GeneratedText))
