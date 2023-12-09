@@ -7,14 +7,30 @@
 <div class="">
     <h1 class="text-center display-4">Welcome</h1>
     @*
-    <p>
-        Key: @User.Claims.FirstOrDefault(c=>c.Type == "Nai.AccessKey")?.ToString();
-    </p>
-    <p>
-        Token: @User.Claims.FirstOrDefault(c => c.Type == "Nai.AccessToken")?.Value?.ToString();
-    </p>
+        <p>
+            Key: @User.Claims.FirstOrDefault(c=>c.Type == "Nai.AccessKey")?.ToString();
+        </p>
+        <p>
+            Token: @User.Claims.FirstOrDefault(c => c.Type == "Nai.AccessToken")?.Value?.ToString();
+        </p>
     *@
-    <ul>
-        <li><a href="~/examples/GenerateText">Generate Text</a></li>
-    </ul>
+    <div class="row">
+        <div class="col-2"></div>
+        <div class="col">
+            <h2 class="text-center">Examples</h2>
+            <ul>
+                <li><a href="~/Examples/GenerateAsync">Generate Async</a></li>
+                <li><a href="~/Examples/GenerateVoice">Generate Voice</a></li>
+                <li><a href="~/Examples/GetModules">Get Modules</a></li>
+                <li><a href="~/Examples/GetStories">Get Stories</a></li>
+            </ul>
+        </div>
+        <div class="col">
+            <h2 class="text-center">Utilities</h2>
+            <ul>
+                <li><a href="~/Utilities/DataDecode">Decode Data String</a></li>
+            </ul>
+        </div>
+        <div class="col-2"></div>
+    </div>
 </div>
