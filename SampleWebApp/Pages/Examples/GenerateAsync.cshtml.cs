@@ -38,8 +38,8 @@ namespace SampleWebApp.Pages.Examples
                     [10691],
                     [49333],
                     [1266],
-                    [19438],
-                    [43145],
+                    //19438],
+                    //[43145],
                     [26523],
                     [41471],
                     [2936],
@@ -150,7 +150,7 @@ namespace SampleWebApp.Pages.Examples
                     12
                 ],
                 return_full_text = false,
-                stop_sequences = [],
+                stop_sequences = [ [43145], [19438] ],
                 tail_free_sampling = 0.941,
                 temperature = 2.5,
                 typical_p = 0.969,
@@ -158,9 +158,7 @@ namespace SampleWebApp.Pages.Examples
                 use_string = false,
             };
 
-            NovelAPI? api = NovelAPI.NewNovelAiAPI(new Structs.AuthConfig() { EncryptionKey = EncryptionKey, AccessToken = AccessToken });
-            api.currentParams = opts;
-            //api.currentParams.stop_sequences = [];
+            NovelAPI? api = NovelAPI.NewNovelAiAPI(new Structs.AuthConfig() { EncryptionKey = EncryptionKey, AccessToken = AccessToken }, opts);
 
             // [You are Rardon][You are talking to Maru via online chat]{Maru greets you
             GeneratedText += PromptText ?? "";
