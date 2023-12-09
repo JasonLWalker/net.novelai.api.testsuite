@@ -1,0 +1,28 @@
+﻿@page
+@model SampleWebApp.Pages.Examples.GenerateVoiceModel
+@{
+}
+
+<label>TTS Text:</label>
+<div class="input-group mb-3">
+    <input type="text" name="PromptText" class="form-control" rows="10" />
+    <button type="button" class="btn-close" aria-label="Close" style="position: absolute; right: 125px; top: 7px;z-index:100;"></button>
+    <button id="button-generate" type="button" class="btn btn-primary">Generate Text</button>
+</div>
+
+<div id="generated-audio"></div>
+@section Scripts
+{
+    <script>
+        $('.input-group .btn-close').on('click', function () {
+            $('input[name=PromptText]').val('');
+        });
+
+        $('#button-generate').on('click', function () {
+            $('#generated-audio').empty();
+            var audioSource = $('<audio controls><source src="/Examples/GenerateVoice?handler=Voice&text=' + encodeURIComponent($('input[name=PromptText]').val()) + '" /></audio>');
+            $('#generated-audio').append(audioSource);
+            $('#generated-audio > audio')[0].play()
+        });
+    </script>
+}

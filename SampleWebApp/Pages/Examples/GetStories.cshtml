@@ -1,0 +1,11 @@
+﻿@page
+@model SampleWebApp.Pages.Examples.GetStoriesModel
+@{
+}
+<h1>Stories</h1>
+<ul>
+    @foreach (var story in Model.Stories)
+    {
+        <li><a href="~/Examples/GetStory/@story.storyID">@story.meta.title</a></li>
+    }
+</ul>
