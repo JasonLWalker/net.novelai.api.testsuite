@@ -2,10 +2,36 @@
 @model SampleWebApp.Pages.Examples.GenerateVoiceModel
 @{
 }
-
+<h2>Generate Voice</h2>
+<div class="row">
+    <div class="col">
+        <label>Version:</label>
+        <select name="version" class="form-control form-select">
+            <option value="v1">Version 1</option>
+            <option value="v2" selected>Version 2</option>
+        </select>
+        <input type="hidden" name="voice" value="" />
+        <input type="hidden" name="seed" value="" />
+    </div>
+    <div class="col">
+        <label>TTS Voice:</label>
+        <select name="v1-voice" class="form-control form-select d-none">
+            <option value="-1">Custom Seed</option>
+        </select>
+        <select name="v2-voice" class="form-control form-select">
+            <option value="Aina" selected>Aina</option>
+            <option value="Aulon">Aulon</option>
+            <option value="">Custom Seed</option>
+        </select>
+    </div>
+    <div class="col">
+        <label>Voice Seed:</label>
+        <input type="text" name="custom-seed" class="form-control" />
+    </div>
+</div>
 <label>TTS Text:</label>
 <div class="input-group mb-3">
-    <input type="text" name="PromptText" class="form-control" rows="10" />
+    <input type="text" name="PromptText" class="form-control" />
     <button type="button" class="btn-close" aria-label="Close" style="position: absolute; right: 125px; top: 7px;z-index:100;"></button>
     <button id="button-generate" type="button" class="btn btn-primary">Generate Text</button>
 </div>
@@ -14,13 +40,39 @@
 @section Scripts
 {
     <script>
+        function setVoiceParams() {
+            var version = $('select[name=version]').val();
+            var voice = -1;
+            var seed = $('input[name=custom-seed]').val();
+            if (version == 'v2') {
+                $('select[name=v1-voice]').addClass('d-none');
+                $('select[name=v2-voice]').removeClass('d-none');
+                seed = seed || $('select[name=v2-voice]').val();
+            } else {
+                $('select[name=v1-voice]').removeClass('d-none');
+                $('select[name=v2-voice]').addClass('d-none');
+                voice = $('select[name=v1-voice]').val();
+            }
+
+            $('input[name=seed]').val(seed);
+            $('input[name=voice]').val(voice);
+        }
+
         $('.input-group .btn-close').on('click', function () {
             $('input[name=PromptText]').val('');
         });
 
+        $('select, input[name=custom-seed]').on('change', setVoiceParams);
+        setVoiceParams();
+
         $('#button-generate').on('click', function () {
             $('#generated-audio').empty();
-            var audioSource = $('<audio controls><source src="/Examples/GenerateVoice?handler=Voice&text=' + encodeURIComponent($('input[name=PromptText]').val()) + '" /></audio>');
+            var audioSource = $('<audio controls><source src="/Examples/GenerateVoice?handler=Voice&text=' + 
+                encodeURIComponent($('input[name=PromptText]').val()) +
+                '&voice=' + encodeURIComponent($('input[name=voice]').val()) +
+                '&seed=' + encodeURIComponent($('input[name=seed]').val()) +
+                '&version=' + encodeURIComponent($('select[name=version]').val()) +
+                '" /></audio>');
             $('#generated-audio').append(audioSource);
             $('#generated-audio > audio')[0].play()
         });
