@@ -2,3 +2,5 @@
 @model SampleWebApp.Pages.Examples.GetStoryModel
 @{
 }
+<h2>@Model.Story?.title</h2>
+<textarea rows="10" class="form-control" readonly>@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Story, Newtonsoft.Json.Formatting.Indented))</textarea>
