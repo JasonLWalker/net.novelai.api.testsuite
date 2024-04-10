@@ -11,8 +11,8 @@ namespace SampleWebApp
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddSession();
-            builder.Services.AddMemoryCache();
+            //builder.Services.AddSession();
+            //builder.Services.AddMemoryCache();
             // Add services to the container.
             builder.Services.AddRazorPages(options =>
             {
@@ -39,7 +39,7 @@ namespace SampleWebApp
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseSession();
+            //app.UseSession();
 
             app.UseRouting();
 
