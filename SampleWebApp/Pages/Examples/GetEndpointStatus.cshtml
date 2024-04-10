@@ -1,0 +1,7 @@
+﻿@page
+@using net.novelai.api
+@{
+    bool isActive = await NovelAPI.GetEndpointStatus();
+}
+<h1>Endpoint Status</h1>
+Endpoint is @(isActive ? "" : "not") active.
