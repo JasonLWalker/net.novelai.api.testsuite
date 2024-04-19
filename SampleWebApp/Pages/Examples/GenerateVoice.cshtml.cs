@@ -10,7 +10,7 @@ namespace SampleWebApp.Pages.Examples
     public class GenerateVoiceModel : PageModel
     {
         [BindProperty]
-        public string PromptText { get; set; }
+        public string PromptText { get; set; } = "";
 
         public void OnGet()
         {
@@ -18,10 +18,10 @@ namespace SampleWebApp.Pages.Examples
 
         public async Task<IActionResult> OnGetVoice(string text, int voice, string seed, string version)
         {
-            string? EncryptionKey = User.Claims.FirstOrDefault(c => c.Type == "Nai.EncryptionKey")?.Value?.ToString();
-            string? AccessToken = User.Claims.FirstOrDefault(c => c.Type == "Nai.AccessToken")?.Value?.ToString();
+            string? encryptionKey = User.Claims.FirstOrDefault(c => c.Type == "Nai.EncryptionKey")?.Value?.ToString();
+            string? accessToken = User.Claims.FirstOrDefault(c => c.Type == "Nai.AccessToken")?.Value?.ToString();
 
-            NovelAPI? api = NovelAPI.NewNovelAiAPI(new Structs.AuthConfig() { EncryptionKey = EncryptionKey, AccessToken = AccessToken });
+            NovelAPI? api = NovelAPI.NewNovelAiAPI(new Structs.AuthConfig() { EncryptionKey = encryptionKey, AccessToken = accessToken });
             var response = await api.GenerateVoiceAsync(new Structs.NaiGenerateVoice()
             {
                 text = text,
