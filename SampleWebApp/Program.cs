@@ -17,6 +17,7 @@ namespace SampleWebApp
             builder.Services.AddRazorPages(options =>
             {
             });
+            builder.Services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
 
             builder.Services.AddAuthentication(NaiAuthScheme)
                 .AddCookie(NaiAuthScheme, options => {

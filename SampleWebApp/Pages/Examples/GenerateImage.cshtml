@@ -1,0 +1,176 @@
+﻿@page
+@using net.novelai.api
+@using Newtonsoft.Json
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model SampleWebApp.Pages.Examples.GenerateImageModel
+@{
+}
+<h2>Generate Image</h2>
+<form>
+    <div class="row">
+        <div class="col-6">
+            <em>Please note that this feature will use Anlas from your NovelAI account to generate the images in the same amount as the NAI website.</em>
+            <div class="row">
+                <div class="col-6">
+                    <label>Model:</label>
+                    <select name="model" class="form-control form-select">
+                        <optgroup label="New">
+                            <option value="@JsonConvert.SerializeObject(ImageGenerationModel.AnimeV3)">NAI Diffusion Anime V3</option>
+                        </optgroup>
+                        <optgroup label="Legacy">
+                            <option value="@JsonConvert.SerializeObject(ImageGenerationModel.AnimeV2)">NAI Diffusion Anime V2</option>
+                        </optgroup>
+                    </select>
+                    <input type="hidden" name="action" value="@JsonConvert.SerializeObject(ImageGenerationType.Normal)"/>
+                    @Html.AntiForgeryToken()
+                </div>
+                <div class="col-6">
+                    <label>Sampler:</label>
+                    <select name="parameters[sampler]" class="form-control form-select">
+                        <option value="@ImageSampler.k_euler_ancestral" selected>Euler Ancestral</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label>Steps:</label>
+                    <input type="number" name="parameters[steps]" class="form-control" value="28" />
+                </div>
+                <div class="col">
+                    <label>Guidance:</label>
+                    <input type="number" name="parameters[scale]" class="form-control" value="10" />
+                </div>
+                <div class="col">
+                    <label>Seed:</label>
+                    <input type="number" name="parameters[seed]" class="form-control" placeholder="[Random]" />
+                </div>
+                <div class="col-12">
+                    <label>Prompt:</label>
+                    <div class="position-relative">
+                        <textarea type="text" name="input" class="form-control" placeholder="Write your prompt here. Use tags to sculpt your outputs."></textarea>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <label>Undesired Content:</label>
+                    <div class="position-relative">
+                        <textarea type="text" name="parameters[negative_prompt]" class="form-control" placeholder="Write what you want removed from the generation."></textarea>
+                    </div>
+                </div>
+                <div class="col">
+                    <label>&nbsp;</label>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" name="parameters[qualityToggle]" type="checkbox" role="switch" id="qualityToggle" checked>
+                        <label class="form-check-label" for="qualityToggle">Add Quality Tags</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <label>Undesired Content Preset:</label>
+                    <select name="parameters[ucPreset]" class="form-control form-select">
+                        <option value="@NaiGenerateImageParameters.UCPreset.Preset_Low_Quality_Bad_Anatomy" selected>Low Quality + Bad Anatomy</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <label>Number of images to generate:</label><br />
+                    <div class="btn-group" role="group">
+                        <input type="radio" name="parameters[n_samples]" class="btn-check" id="btnradio1" value="1" autocomplete="off" checked>
+                        <label class="btn btn-outline-primary" for="btnradio1">1</label>
+
+                        <input type="radio" class="btn-check" name="btnradio" id="btnradio2" value="2" autocomplete="off" disabled>
+                        <label class="btn btn-outline-primary" for="btnradio2">2</label>
+
+                        <input type="radio" class="btn-check" name="btnradio" id="btnradio3" value="3" autocomplete="off" disabled>
+                        <label class="btn btn-outline-primary" for="btnradio3">3</label>
+
+                        <input type="radio" class="btn-check" name="btnradio" id="btnradio3" value="4" autocomplete="off" disabled>
+                        <label class="btn btn-outline-primary" for="btnradio3">4</label>
+
+                        <input type="radio" class="btn-check" name="btnradio" id="btnradio3" value="5" autocomplete="off" disabled>
+                        <label class="btn btn-outline-primary" for="btnradio3">5</label>
+
+                        <input type="radio" class="btn-check" name="btnradio" id="btnradio3" value="6" autocomplete="off" disabled>
+                        <label class="btn btn-outline-primary" for="btnradio3">6</label>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <br />
+                    <button id="button-generate" type="button" class="btn btn-primary">Generate Image (may cost Anlas)</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-5 border border-end-0">
+            <div id="generated-image" class="text-center">
+                <img class="img-fluid" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48IS0tIEZvbnQgQXdlc29tZSBQcm8gNS4xNS4xIGJ5IEBmb250YXdlc29tZSAtIGh0dHBzOi8vZm9udGF3ZXNvbWUuY29tIExpY2Vuc2UgLSBodHRwczovL2ZvbnRhd2Vzb21lLmNvbS9saWNlbnNlIChDb21tZXJjaWFsIExpY2Vuc2UpIC0tPjxwYXRoIGQ9Ik00NjQgNjRINDhDMjEuNDkgNjQgMCA4NS40OSAwIDExMnYyODhjMCAyNi41MSAyMS40OSA0OCA0OCA0OGg0MTZjMjYuNTEgMCA0OC0yMS40OSA0OC00OFYxMTJjMC0yNi41MS0yMS40OS00OC00OC00OHptLTYgMzM2SDU0YTYgNiAwIDAgMS02LTZWMTE4YTYgNiAwIDAgMSA2LTZoNDA0YTYgNiAwIDAgMSA2IDZ2Mjc2YTYgNiAwIDAgMS02IDZ6TTEyOCAxNTJjLTIyLjA5MSAwLTQwIDE3LjkwOS00MCA0MHMxNy45MDkgNDAgNDAgNDAgNDAtMTcuOTA5IDQwLTQwLTE3LjkwOS00MC00MC00MHpNOTYgMzUyaDMyMHYtODBsLTg3LjUxNS04Ny41MTVjLTQuNjg2LTQuNjg2LTEyLjI4NC00LjY4Ni0xNi45NzEgMEwxOTIgMzA0bC0zOS41MTUtMzkuNTE1Yy00LjY4Ni00LjY4Ni0xMi4yODQtNC42ODYtMTYuOTcxIDBMOTYgMzA0djQ4eiIvPjwvc3ZnPg==" />
+            </div>
+        </div>
+        <div class="col border p-1" style="overflow-y:scroll">
+            <div id="generated-image-list" class="text-center">
+            </div>
+        </div>
+    </div>
+</form>
+<input type="file" name="" id="fileId" onchange="onImageUploaded(this)">
+@section Scripts
+{
+    <script>
+        function onImageUploaded(elem) {
+            imageUploaded(elem, function (value, data) {
+                let $img = $('<img class="img-fluid img-thumbnail mb-1" />');
+                $img.attr('src', data);
+                $('#generated-image-list').append($img);
+
+            });
+        }
+
+        function imageUploaded(elem, callback) {
+            let base64String = "";
+            let base64Data = "";
+            let file = elem['files'][0];
+
+            let reader = new FileReader();
+            reader.onload = function () {
+                base64Data = reader.result;
+                base64String = base64Data.replace("data:", "")
+                    .replace(/^.+,/, "");
+            }
+            reader.onloadend = function () {
+                if (typeof callback == 'function') {
+                    callback(base64String, base64Data);
+                }
+            }
+
+            reader.readAsDataURL(file);
+        }
+
+        $('.btn-close').on('click', function (evt) {
+            $('textarea', $(this).parent()).val('');
+        });
+
+        $('#button-generate').on('click', function () {
+
+            $.ajax({
+                url: '/Examples/GenerateImage?handler=Image',
+                type: 'POST',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: $('form').serializeArray(),
+                cache: false,
+                xhrFields: {
+                    responseType: 'blob'
+                }
+            }).done(function (result, textStatus, jqXHR) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    data = reader.result;
+                    $('#generated-image img').attr('src', data);
+                    let $img = $('<img class="img-fluid img-thumbnail mb-1" />');
+                    $img.attr('src', data);
+                    $('#generated-image-list').append($img);
+                    
+                };
+                reader.readAsDataURL(result);
+            });
+
+        });
+    </script>
+}
+<a href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48IS0tIEZvbnQgQXdlc29tZSBQcm8gNS4xNS4xIGJ5IEBmb250YXdlc29tZSAtIGh0dHBzOi8vZm9udGF3ZXNvbWUuY29tIExpY2Vuc2UgLSBodHRwczovL2ZvbnRhd2Vzb21lLmNvbS9saWNlbnNlIChDb21tZXJjaWFsIExpY2Vuc2UpIC0tPjxwYXRoIGQ9Ik00NjQgNjRINDhDMjEuNDkgNjQgMCA4NS40OSAwIDExMnYyODhjMCAyNi41MSAyMS40OSA0OCA0OCA0OGg0MTZjMjYuNTEgMCA0OC0yMS40OSA0OC00OFYxMTJjMC0yNi41MS0yMS40OS00OC00OC00OHptLTYgMzM2SDU0YTYgNiAwIDAgMS02LTZWMTE4YTYgNiAwIDAgMSA2LTZoNDA0YTYgNiAwIDAgMSA2IDZ2Mjc2YTYgNiAwIDAgMS02IDZ6TTEyOCAxNTJjLTIyLjA5MSAwLTQwIDE3LjkwOS00MCA0MHMxNy45MDkgNDAgNDAgNDAgNDAtMTcuOTA5IDQwLTQwLTE3LjkwOS00MC00MC00MHpNOTYgMzUyaDMyMHYtODBsLTg3LjUxNS04Ny41MTVjLTQuNjg2LTQuNjg2LTEyLjI4NC00LjY4Ni0xNi45NzEgMEwxOTIgMzA0bC0zOS41MTUtMzkuNTE1Yy00LjY4Ni00LjY4Ni0xMi4yODQtNC42ODYtMTYuOTcxIDBMOTYgMzA0djQ4eiIvPjwvc3ZnPg==" download="placeholder.svg">Download</a>
