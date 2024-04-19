@@ -1,0 +1,69 @@
+﻿@page
+@model SampleWebApp.Pages.Examples.GetUserDataModel
+@{
+    var data = Model.UserData;
+}
+<h2>User Data</h2>
+
+<div class="row">
+    <div class="col-8">
+        <h3>Priority</h3>
+        <div class="row">
+            <div class="col-12">Max Priority Actions: @data.Priority.MaxPriorityActions</div>
+            <div class="col-12">Task Priority: @data.Priority.TaskPriority</div>
+            <div class="col-12">Next Refill at: @data.Priority.NextRefillDateTime</div>
+        </div>
+    </div>
+    <div class="col-4">
+        <h3>Information</h3>
+        <div class="row">
+            <div class="col-12">Email Verified: @data.Information.EmailVerified</div>
+            <div class="col-12">Email Verification Sent: @data.Information.EmailVerificationLetterSent</div>
+            <div class="col-12">Trial Activated: @data.Information.TrialActivated</div>
+            <div class="col-12">Trial Actions Left: @data.Information.TrialActionsLeft</div>
+            <div class="col-12">Trial Images Left: @data.Information.TrialImagesLeft</div>
+            <div class="col-12">Account Created: @data.Information.AccountCreatedDateTime</div>
+        </div>
+    </div>
+    <div class="col-4">
+        <h3>Subscription</h3>
+        <div class="row">
+            <div class="col-12">Tier: @data.Subscription.Tier</div>
+            <div class="col-12">Active: @data.Subscription.Active</div>
+            <div class="col-12">Expires: @data.Subscription.ExpiresAtDateTime</div>
+            <div class="col-12">
+                Perks:
+                <ul>
+                    <li>Max Priority Actions: @data.Subscription.Perks.MaxPriorityActions</li>
+                    <li>Start Priority: @data.Subscription.Perks.StartPriority</li>
+                    <li>Module Training Steps: @data.Subscription.Perks.ModuleTrainingSteps</li>
+                    <li>Unlimited Max Priority: @data.Subscription.Perks.UnlimitedMaxPriority</li>
+                    <li>Voice Generation: @data.Subscription.Perks.VoiceGeneration</li>
+                    <li>Image Generation: @data.Subscription.Perks.ImageGeneration</li>
+                    <li>Start Unlimited Image Generation: @data.Subscription.Perks.UnlimitedImageGeneration</li>
+                    <li>Context Tokens: @data.Subscription.Perks.ContextTokens</li>
+                </ul>
+            </div>
+            <div class="col-12">
+                Training Steps:
+                <ul>
+                    <li>Fixed Training Steps Left: @data.Subscription.TrainingStepsLeft.FixedTrainingStepsLeft</li>
+                    <li>Purchased Training Steps: @data.Subscription.TrainingStepsLeft.PurchasedTrainingSteps</li>
+                </ul>
+            </div>
+            <div class="col-12">Anlas: @data.Subscription.Anlas</div>
+        </div>
+    </div>
+    <div class="col-4">
+        <h3>Keystore</h3>
+        <row>
+            <div class="col">Keystore:<br /><textarea class="form-control" rows="15" readonly>@data.Keystore.keystore</textarea></div>
+        </row>
+    </div>
+    <div class="col-4">
+        <h3>Settings</h3>
+        <row>
+            <div class="col">Settings:<br /><textarea class="form-control" rows="15" readonly>@data.Settings</textarea></div>
+        </row>
+    </div>
+</div>

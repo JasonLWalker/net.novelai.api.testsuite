@@ -1,0 +1,14 @@
+﻿@page
+@model SampleWebApp.Pages.Examples.GetUserAccountInformationModel
+@{
+    var data = Model.AccountInformation;
+}
+<h2>User Account Information</h2>
+<div class="col">Email Verified: @data.EmailVerified</div>
+<div class="col">Email Verification Sent: @data.EmailVerificationLetterSent</div>
+<div class="col">Trial Activated: @data.TrialActivated</div>
+<div class="col">Trial Actions Left: @data.TrialActionsLeft</div>
+<div class="col">Trial Images Left: @data.TrialImagesLeft</div>
+<div class="col">Account Created: @data.AccountCreatedDateTime</div>
+
+

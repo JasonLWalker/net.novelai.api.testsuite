@@ -1,0 +1,11 @@
+﻿@page
+@model SampleWebApp.Pages.Examples.GetUserPriorityModel
+@{
+    var data = Model.UserPriority;
+}
+<h2>User Priority</h2>
+<div class="col">Max Priority Actions: @data.MaxPriorityActions</div>
+<div class="col">Next Refill at: @data.NextRefillDateTime</div>
+<div class="col">Task Priority: @data.TaskPriority</div>
+
+

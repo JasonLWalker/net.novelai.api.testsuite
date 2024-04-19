@@ -1,0 +1,31 @@
+﻿@page
+@model SampleWebApp.Pages.Examples.GetUserSubscriptionModel
+@{
+    var data = Model.UserSubscription;
+}
+<h2>User Subscription</h2>
+<div class="col">Tier: @data.Tier</div>
+<div class="col">Active: @data.Active</div>
+<div class="col">Expires: @data.ExpiresAtDateTime</div>
+<div class="col">
+    Perks:
+    <ul>
+        <li>Max Priority Actions: @data.Perks.MaxPriorityActions</li>
+        <li>Start Priority: @data.Perks.StartPriority</li>
+        <li>Module Training Steps: @data.Perks.ModuleTrainingSteps</li>
+        <li>Unlimited Max Priority: @data.Perks.UnlimitedMaxPriority</li>
+        <li>Voice Generation: @data.Perks.VoiceGeneration</li>
+        <li>Image Generation: @data.Perks.ImageGeneration</li>
+        <li>Start Unlimited Image Generation: @data.Perks.UnlimitedImageGeneration</li>
+        <li>Context Tokens: @data.Perks.ContextTokens</li>
+    </ul>
+</div>
+<div class="col">
+    Training Steps:
+    <ul>
+        <li>Fixed Training Steps Left: @data.TrainingStepsLeft.FixedTrainingStepsLeft</li>
+        <li>Purchased Training Steps: @data.TrainingStepsLeft.PurchasedTrainingSteps</li>
+    </ul>
+</div>
+<div class="col">Anlas: @data.Anlas</div>
+
