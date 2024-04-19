@@ -1,0 +1,7 @@
+﻿@page
+@using net.novelai.api
+@{
+    bool isActive = await NovelAPI.GetEndpointStatus(Structs.IMAGE_ENDPOINT);
+}
+<h1>Image API Endpoint Status</h1>
+Image API endpoint is @(isActive ? "" : "not") active.
