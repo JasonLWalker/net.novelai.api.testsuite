@@ -1,0 +1,859 @@
+﻿@page
+@model MsgPackrUnpackModel
+@{
+
+}
+<form method="post">
+    <select name="SampleFile" class="form-select">
+        <option>[Enter a JSON object, or select from list]</option>
+        <option value="/json/example.json">Example 1</option>
+        <option value="/json/example2.json">Example 2</option>
+        <option value="/json/example3.json">Example 3</option>
+        <option value="/json/example4.json">Example 4</option>
+        <option value="/json/example5.json">Example 5</option>
+        <option value="/json/floats.json">Floating Point Numbers</option>
+        <option value="/json/sample-large.json">Large Sample</option>
+        <option value="/json/strings2.json">Strings</option>
+    </select>
+    <textarea name="JsonText" class="form-control mb-1" rows="10">@Model.JsonText</textarea>
+    <div class="@(string.IsNullOrWhiteSpace(Model.PackedText) ? " d-none" : "" )">
+        <label>MessagePack (Base64-Encoded):</label>
+        <textarea type="text" name="PackedText" class="form-control mb-1" rows="10">@Model.PackedText</textarea>
+    </div>
+    @if (!string.IsNullOrWhiteSpace(Model.UnpackedJson))
+    {
+        <label>Decoded Json:</label>
+        <textarea type="text" name="UnpackedJson" class="form-control mb-1" rows="10">@Model.UnpackedJson</textarea>
+    }
+    <button type="button" class="btn btn-sm btn-primary">Run Tests</button>
+</form>
+@section Scripts {
+<script src="~/lib/msgpackr/dist/index.js"></script>
+<script>
+    $("select[name=SampleFile]").on("change", (e) => {
+        var url = $(e.target).val();
+/*
+        $.ajaxSetup({
+            scriptCharset: "utf-8",
+            contentType: "application/json; charset=utf-8"
+        })
+*/
+        $.getJSON(url).done((data) => {
+            $('textarea[name=JsonText]').val(JSON.stringify(data, null, '\t'));
+        });
+    });
+
+    var _ = function () {
+        function e() {
+            (0,
+                r.Z)(this, e),
+                this.sections = new Map,
+                this.order = [],
+                this.history = new d.kS,
+                this.dirtySections = new Map,
+                this.step = 0
+        }
+        var t = e.prototype;
+        return t.clear = function () {
+            this.sections.clear(),
+                this.order = [],
+                this.history = new d.kS,
+                this.dirtySections.clear(),
+                this.step = 0
+        }
+            ,
+            t.addToOrder = function (e, t) {
+                var n = void 0 === t ? -1 : 0 === t ? 0 : this.order.indexOf(t) + 1;
+                this.order.splice(-1 === n ? this.order.length : n, 0, e)
+            }
+            ,
+            t.removeFromOrder = function (e) {
+                this.order = this.order.filter((function (t) {
+                    return t !== e
+                }
+                ))
+            }
+            ,
+            t.getSections = function () {
+                var e = this;
+                return this.order.map((function (t) {
+                    return {
+                        id: t,
+                        section: e.sections.get(t)
+                    }
+                }
+                )).filter((function (e) {
+                    return Boolean(e.section)
+                }
+                ))
+            }
+            ,
+            t.getSection = function (e) {
+                return this.sections.get(e)
+            }
+            ,
+            t.getSectionsBefore = function (e, t) {
+                var n = this
+                    , r = this.order.indexOf(e);
+                return r ? this.order.slice(Math.max(0, r - t), r).map((function (e) {
+                    return {
+                        id: e,
+                        section: n.sections.get(e)
+                    }
+                }
+                )).filter((function (e) {
+                    return Boolean(e.section)
+                }
+                )) : []
+            }
+            ,
+            t.getDescendents = function () {
+                return this.history.getCurrentNode().children
+            }
+            ,
+            t.getDescendent = function (e) {
+                var t = null !== e && void 0 !== e ? e : this.getHistoryNode().route;
+                return t ? this.history.getNode(t) : void 0
+            }
+            ,
+            t.getHistoryNode = function () {
+                return this.history.getCurrentNode()
+            }
+            ,
+            t.getHistoryRoot = function () {
+                return this.history
+            }
+            ,
+            t.isDirty = function () {
+                return this.dirtySections.size > 0
+            }
+            ,
+            t.pushChange = function (e) {
+                if (0 !== e.size) {
+                    0 === this.dirtySections.size && (this.history.getCurrentChangeSet().size > 0 || this.history.isCurrentRoot()) && this.history.pushState();
+                    var t = !0
+                        , n = !1
+                        , r = void 0;
+                    try {
+                        for (var i, a = this, p = function () {
+                            var e = (0,
+                                o.Z)(i.value, 2)
+                                , t = e[0]
+                                , n = e[1]
+                                , r = n.changedSection
+                                , p = n.after;
+                            if (void 0 === p) {
+                                var s = a.withPushedHistory()
+                                    , u = s.order.indexOf(t);
+                                p = u > 0 ? s.order[u - 1] : s.order.length > 0 && -1 === u ? s.order[s.order.length - 1] : 0
+                            }
+                            if (a.sections.has(t))
+                                if (r) {
+                                    var _ = a.sections.get(t);
+                                    if ((0,
+                                        c.g3)(_, r))
+                                        a.dirtySections.delete(t);
+                                    else if (a.dirtySections.has(t)) {
+                                        var f = a.dirtySections.get(t);
+                                        switch (f.type) {
+                                            case d.kx.create:
+                                                f.section = r;
+                                                break;
+                                            case d.kx.update:
+                                                f.diff = new c.QD(_, r);
+                                                break;
+                                            case d.kx.remove:
+                                                a.dirtySections.set(t, {
+                                                    type: d.kx.update,
+                                                    diff: new c.QD(_, r)
+                                                })
+                                        }
+                                    } else
+                                        a.dirtySections.set(t, {
+                                            type: d.kx.update,
+                                            diff: new c.QD(_, r)
+                                        })
+                                } else
+                                    a.dirtySections.set(t, {
+                                        type: d.kx.remove,
+                                        previous: a.sections.get(t),
+                                        after: p
+                                    });
+                            else if (a.dirtySections.has(t))
+                                if (r) {
+                                    var y = a.dirtySections.get(t);
+                                    switch (y.type) {
+                                        case d.kx.create:
+                                            y.section = r;
+                                            break;
+                                        case d.kx.update:
+                                        case d.kx.remove:
+                                            throw new Error("can't update non-existing section")
+                                    }
+                                } else {
+                                    var g = (0,
+                                        l.Z)(a.dirtySections.entries()).filter((function (e) {
+                                            var n = (0,
+                                                o.Z)(e, 2)[1];
+                                            return (n.type === d.kx.create || n.type === d.kx.remove) && n.after === t
+                                        }
+                                        ));
+                                    if (g.length > 0) {
+                                        var m = a.withPushedHistory()
+                                            , h = !0
+                                            , b = !1
+                                            , v = void 0;
+                                        try {
+                                            for (var k, x = g[Symbol.iterator](); !(h = (k = x.next()).done); h = !0) {
+                                                var w = k.value
+                                                    , S = m.getSectionsBefore(t, 1);
+                                                w[1].after = S.length > 0 ? S[0].id : 0
+                                            }
+                                        } catch (A) {
+                                            b = !0,
+                                                v = A
+                                        } finally {
+                                            try {
+                                                h || null == x.return || x.return()
+                                            } finally {
+                                                if (b)
+                                                    throw v
+                                            }
+                                        }
+                                    }
+                                    a.dirtySections.delete(t)
+                                }
+                            else if (r)
+                                if (void 0 !== p) {
+                                    var C = (0,
+                                        l.Z)(a.dirtySections.entries()).filter((function (e) {
+                                            var t = (0,
+                                                o.Z)(e, 2)[1];
+                                            return (t.type === d.kx.create || t.type === d.kx.remove) && t.after === p
+                                        }
+                                        ))
+                                        , O = !0
+                                        , V = !1
+                                        , N = void 0;
+                                    try {
+                                        for (var B, T = C[Symbol.iterator](); !(O = (B = T.next()).done); O = !0) {
+                                            B.value[1].after = t
+                                        }
+                                    } catch (A) {
+                                        V = !0,
+                                            N = A
+                                    } finally {
+                                        try {
+                                            O || null == T.return || T.return()
+                                        } finally {
+                                            if (V)
+                                                throw N
+                                        }
+                                    }
+                                    a.dirtySections.set(t, {
+                                        type: d.kx.create,
+                                        section: r,
+                                        after: p
+                                    })
+                                } else
+                                    a.dirtySections.set(t, {
+                                        type: d.kx.create,
+                                        section: r
+                                    });
+                            else
+                                a.dirtySections.delete(t)
+                        }, s = e.entries()[Symbol.iterator](); !(t = (i = s.next()).done); t = !0)
+                            p()
+                    } catch (u) {
+                        n = !0,
+                            r = u
+                    } finally {
+                        try {
+                            t || null == s.return || s.return()
+                        } finally {
+                            if (n)
+                                throw r
+                        }
+                    }
+                    0 === this.dirtySections.size && 0 === this.history.getCurrentChangeSet().size && 0 === this.history.getCurrentNode().children.size && this.history.popState()
+                }
+            }
+            ,
+            t.canPushHistory = function () {
+                return this.dirtySections.size > 0
+            }
+            ,
+            t.pushHistory = function (e) {
+                if (!this.canPushHistory())
+                    return !1;
+                var t = (0,
+                    u.tN)(this.dirtySections, !1)
+                    , n = !0
+                    , r = !1
+                    , i = void 0;
+                try {
+                    for (var a, l = t.entries()[Symbol.iterator](); !(n = (a = l.next()).done); n = !0) {
+                        var p = (0,
+                            o.Z)(a.value, 2)
+                            , s = p[0]
+                            , c = p[1];
+                        switch (c.type) {
+                            case d.kx.create:
+                                this.sections.set(s, c.section),
+                                    this.addToOrder(s, c.after);
+                                break;
+                            case d.kx.update:
+                                this.sections.set(s, c.diff.apply(this.sections.get(s)));
+                                break;
+                            case d.kx.remove:
+                                this.sections.delete(s),
+                                    this.removeFromOrder(s)
+                        }
+                    }
+                } catch (_) {
+                    r = !0,
+                        i = _
+                } finally {
+                    try {
+                        n || null == l.return || l.return()
+                    } finally {
+                        if (r)
+                            throw i
+                    }
+                }
+                return this.history.appendChanges(this.dirtySections),
+                    this.dirtySections.clear(),
+                    this.step += 1,
+                    this.history.getCurrentNode().genPosition = e,
+                    !0
+            }
+            ,
+            t.withPushedHistory = function () {
+                if (!this.canPushHistory())
+                    return this;
+                var t = new e;
+                t.order = (0,
+                    l.Z)(this.order),
+                    t.sections = new Map(this.sections);
+                var n = (0,
+                    u.tN)(this.dirtySections, !1)
+                    , r = !0
+                    , i = !1
+                    , a = void 0;
+                try {
+                    for (var p, s = n.entries()[Symbol.iterator](); !(r = (p = s.next()).done); r = !0) {
+                        var c = (0,
+                            o.Z)(p.value, 2)
+                            , _ = c[0]
+                            , f = c[1];
+                        switch (f.type) {
+                            case d.kx.create:
+                                t.sections.set(_, f.section),
+                                    t.addToOrder(_, f.after);
+                                break;
+                            case d.kx.update:
+                                t.sections.set(_, f.diff.apply(t.sections.get(_)));
+                                break;
+                            case d.kx.remove:
+                                t.sections.delete(_),
+                                    t.removeFromOrder(_)
+                        }
+                    }
+                } catch (y) {
+                    i = !0,
+                        a = y
+                } finally {
+                    try {
+                        r || null == s.return || s.return()
+                    } finally {
+                        if (i)
+                            throw a
+                    }
+                }
+                return t.step = this.step + 1,
+                    t
+            }
+            ,
+            t.canPopHistory = function () {
+                return 0 === this.dirtySections.size && !!this.history.getCurrentNode().parent && this.history.getCurrentChangeSet().size > 0
+            }
+            ,
+            t.popHistory = function () {
+                if (this.canPopHistory()) {
+                    var e = this.history.getCurrentChangeSet();
+                    if (this.history.popState() && e) {
+                        e = (0,
+                            u.tN)(e, !0);
+                        var t = !0
+                            , n = !1
+                            , r = void 0;
+                        try {
+                            for (var i, a = e.entries()[Symbol.iterator](); !(t = (i = a.next()).done); t = !0) {
+                                var l = (0,
+                                    o.Z)(i.value, 2)
+                                    , p = l[0]
+                                    , s = l[1];
+                                switch (s.type) {
+                                    case d.kx.create:
+                                        this.sections.delete(p),
+                                            this.removeFromOrder(p);
+                                        break;
+                                    case d.kx.update:
+                                        this.sections.set(p, s.diff.undo(this.sections.get(p)));
+                                        break;
+                                    case d.kx.remove:
+                                        this.sections.set(p, (0,
+                                            c.kE)(s.previous)),
+                                            this.addToOrder(p, s.after)
+                                }
+                            }
+                        } catch (_) {
+                            n = !0,
+                                r = _
+                        } finally {
+                            try {
+                                t || null == a.return || a.return()
+                            } finally {
+                                if (n)
+                                    throw r
+                            }
+                        }
+                        return this.step -= 1,
+                            e
+                    }
+                }
+            }
+            ,
+            t.canDescendHistory = function () {
+                var e = this.history.getCurrentNode().children;
+                return e && e.size > 0
+            }
+            ,
+            t.descendHistory = function (e) {
+                if (this.canDescendHistory() && this.history.descendState(e)) {
+                    var t = this.history.getCurrentChangeSet();
+                    if (t) {
+                        t = (0,
+                            u.tN)(t, !1);
+                        var n = !0
+                            , r = !1
+                            , i = void 0;
+                        try {
+                            for (var a, l = t.entries()[Symbol.iterator](); !(n = (a = l.next()).done); n = !0) {
+                                var p = (0,
+                                    o.Z)(a.value, 2)
+                                    , s = p[0]
+                                    , c = p[1];
+                                switch (c.type) {
+                                    case d.kx.create:
+                                        this.sections.set(s, c.section),
+                                            this.addToOrder(s, c.after);
+                                        break;
+                                    case d.kx.update:
+                                        this.sections.set(s, c.diff.apply(this.sections.get(s)));
+                                        break;
+                                    case d.kx.remove:
+                                        this.sections.delete(s),
+                                            this.removeFromOrder(s)
+                                }
+                            }
+                        } catch (_) {
+                            r = !0,
+                                i = _
+                        } finally {
+                            try {
+                                n || null == l.return || l.return()
+                            } finally {
+                                if (r)
+                                    throw i
+                            }
+                        }
+                        return this.step += 1,
+                            t
+                    }
+                }
+            }
+            ,
+            t.appendText = function (e, t, n) {
+                var r = (0,
+                    c.K$)(e, n)
+                    , p = this.order[this.order.length - 1]
+                    , s = new Map;
+                r.forEach((function (e) {
+                    var n = (0,
+                        u.i6)()
+                        , r = {
+                            changedSection: t ? (0,
+                                a.Z)((0,
+                                    i.Z)({}, e), {
+                                    meta: new Map((0,
+                                        l.Z)(t.entries()).map((function (t) {
+                                            var n = (0,
+                                                o.Z)(t, 2);
+                                            return [n[0], n[1].map((function (t) {
+                                                return {
+                                                    data: t,
+                                                    position: 0,
+                                                    length: e.text.length
+                                                }
+                                            }
+                                            ))]
+                                        }
+                                        )))
+                                }) : e,
+                            after: p
+                        };
+                    p = n,
+                        s.set(n, r)
+                }
+                )),
+                    this.pushChange(s),
+                    this.pushHistory()
+            }
+            ,
+            t.appendSections = function (e) {
+                var t = this.order[this.order.length - 1]
+                    , n = new Map;
+                e.forEach((function (e) {
+                    var r = (0,
+                        u.i6)()
+                        , i = {
+                            changedSection: e,
+                            after: t
+                        };
+                    t = r,
+                        n.set(r, i)
+                }
+                )),
+                    this.pushChange(n),
+                    this.pushHistory()
+            }
+            ,
+            t.getOrderIndex = function (e) {
+                return this.order.indexOf(e)
+            }
+            ,
+            t.getLastSectionId = function () {
+                return 0 === this.order.length ? -1 : this.order[this.order.length - 1]
+            }
+            ,
+            t.getStep = function () {
+                return this.step
+            }
+            ,
+            t.getText = function () {
+                var e, t = this.withPushedHistory(), n = "", r = !0, i = !1, a = void 0;
+                try {
+                    for (var o, p = (null !== (e = (0,
+                        l.Z)(t.getSections()).reverse()) && void 0 !== e ? e : [])[Symbol.iterator](); !(r = (o = p.next()).done); r = !0) {
+                        var s = o.value;
+                        s.section.type === c.bA.text && (n = s.section.text + "\n" + n)
+                    }
+                } catch (d) {
+                    i = !0,
+                        a = d
+                } finally {
+                    try {
+                        r || null == p.return || p.return()
+                    } finally {
+                        if (i)
+                            throw a
+                    }
+                }
+                return n.slice(0, -1)
+            }
+            ,
+            t.getTextWithSourcePrefix = function (e) {
+                var t, n = this.withPushedHistory(), r = "", i = !0, a = !1, p = void 0;
+                try {
+                    for (var d, u = (null !== (t = (0,
+                        l.Z)(n.getSections())) && void 0 !== t ? t : []).entries()[Symbol.iterator](); !(i = (d = u.next()).done); i = !0) {
+                        var _ = (0,
+                            o.Z)(d.value, 2)
+                            , f = _[0]
+                            , y = _[1];
+                        if (y.section.type === c.bA.text) {
+                            var g = y.section.text;
+                            if (e.whitelist.includes(y.section.source))
+                                switch (y.section.source) {
+                                    case s.PO.dialogue:
+                                    case s.PO.action:
+                                        g = "> " + g;
+                                        break;
+                                    case s.PO.instruction:
+                                        0 !== f && n.getSections()[f - 1].section.source === s.PO.instruction || (g = "{ " + g),
+                                            f !== n.getSections().length - 1 && n.getSections()[f + 1].section.source === s.PO.instruction || (g += " }")
+                                }
+                            r += g + "\n"
+                        }
+                    }
+                } catch (m) {
+                    a = !0,
+                        p = m
+                } finally {
+                    try {
+                        i || null == u.return || u.return()
+                    } finally {
+                        if (a)
+                            throw p
+                    }
+                }
+                return r.slice(0, -1)
+            }
+            ,
+            t.getParagraphsWithSourcePrefix = function (e) {
+                var t, n = this.withPushedHistory(), r = [], i = !0, a = !1, p = void 0;
+                try {
+                    for (var d, u = (null !== (t = (0,
+                        l.Z)(n.getSections())) && void 0 !== t ? t : []).entries()[Symbol.iterator](); !(i = (d = u.next()).done); i = !0) {
+                        var _ = (0,
+                            o.Z)(d.value, 2)
+                            , f = _[0]
+                            , y = _[1];
+                        if (y.section.type === c.bA.text) {
+                            var g = {
+                                text: y.section.text,
+                                prefix: "",
+                                suffix: ""
+                            };
+                            if (e.whitelist.includes(y.section.source))
+                                switch (y.section.source) {
+                                    case s.PO.dialogue:
+                                    case s.PO.action:
+                                        g.prefix = "> ";
+                                        break;
+                                    case s.PO.instruction:
+                                        0 !== f && n.getSections()[f - 1].section.source === s.PO.instruction || (g.prefix = "{ "),
+                                            f !== n.getSections().length - 1 && n.getSections()[f + 1].section.source === s.PO.instruction || (g.suffix = " }")
+                                }
+                            r.push(g)
+                        }
+                    }
+                } catch (m) {
+                    a = !0,
+                        p = m
+                } finally {
+                    try {
+                        i || null == u.return || u.return()
+                    } finally {
+                        if (a)
+                            throw p
+                    }
+                }
+                return r
+            }
+            ,
+            t.getLength = function () {
+                var e, t = this.withPushedHistory(), n = 1, r = !0, i = !1, a = void 0;
+                try {
+                    for (var o, l = (null !== (e = t.getSections()) && void 0 !== e ? e : [])[Symbol.iterator](); !(r = (o = l.next()).done); r = !0) {
+                        var p = o.value;
+                        p.section.type === c.bA.text && (n += p.section.text.length + 2)
+                    }
+                } catch (s) {
+                    i = !0,
+                        a = s
+                } finally {
+                    try {
+                        r || null == l.return || l.return()
+                    } finally {
+                        if (i)
+                            throw a
+                    }
+                }
+                return n - 1
+            }
+            ,
+            t.toString = function () {
+                return "Document " + JSON.stringify(this.toJSON(), u.e8, 4)
+            }
+            ,
+            t.toJSON = function () {
+                return {
+                    step: this.step,
+                    dirtySections: this.dirtySections,
+                    sections: this.sections,
+                    order: this.order,
+                    history: this.history
+                }
+            }
+            ,
+            t.getSectionForCharacterPosition = function (e) {
+                var t, n = null !== (t = this.withPushedHistory().getSections()) && void 0 !== t ? t : [], r = 0, i = !0, a = !1, o = void 0;
+                try {
+                    for (var l, p = n[Symbol.iterator](); !(i = (l = p.next()).done); i = !0) {
+                        var s = l.value;
+                        if (s.section.type === c.bA.text) {
+                            var d = s.section.text.length;
+                            if (e >= r && e <= r + d)
+                                return {
+                                    section: s,
+                                    offset: e - r
+                                };
+                            r += d + 1
+                        }
+                    }
+                } catch (u) {
+                    a = !0,
+                        o = u
+                } finally {
+                    try {
+                        i || null == p.return || p.return()
+                    } finally {
+                        if (a)
+                            throw o
+                    }
+                }
+                return {
+                    section: undefined,
+                    offset: e
+                }
+            }
+            ,
+            t.getSectionsForCharacterRange = function (e, t) {
+                var n, r = null !== (n = this.withPushedHistory().getSections()) && void 0 !== n ? n : [], i = 1, a = [], o = 0, l = 0, p = !0, s = !1, d = void 0;
+                try {
+                    for (var u, _ = r[Symbol.iterator](); !(p = (u = _.next()).done); p = !0) {
+                        var f = u.value;
+                        if (f.section.type === c.bA.text) {
+                            var y = f.section.text.length;
+                            i >= e && i + y <= t ? (a.push(f),
+                                l = y) : i < e && i + y > e ? (a.push(f),
+                                    o = e - i,
+                                    i + y >= t && (l = t - i)) : i < t && i + y > t && (a.push(f),
+                                        l = t - i),
+                                i += y + 2
+                        }
+                    }
+                } catch (g) {
+                    s = !0,
+                        d = g
+                } finally {
+                    try {
+                        p || null == _.return || _.return()
+                    } finally {
+                        if (s)
+                            throw d
+                    }
+                }
+                return {
+                    sections: a,
+                    startOffset: o,
+                    endOffset: l
+                }
+            }
+            ,
+            t.findText = function (e) {
+                var t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {};
+                e = e.replace(/[$()*+.?[\\\]^{|}]/g, "\\$&");
+                for (var n, r = t.caseSensitive, i = t.wrap, a = t.direction, o = t.start, l = this.withPushedHistory(), p = null !== (n = l.getSections()) && void 0 !== n ? n : [], s = o ? l.getOrderIndex(o) : 0, d = "backward" === a ? 1 : -1, u = !1, _ = s; ;) {
+                    if (u && _ === s)
+                        return {
+                            section: void 0,
+                            offset: 0,
+                            length: 0
+                        };
+                    if (u = !0,
+                        !i && (_ < 0 || _ >= p.length))
+                        return {
+                            section: void 0,
+                            offset: 0,
+                            length: 0
+                        };
+                    var f = p[_];
+                    if (f.section.type === c.bA.text) {
+                        var y, g = f.section.text, m = g.match(new RegExp(e, r ? "g" : "gi"));
+                        if (m)
+                            return {
+                                section: f,
+                                offset: null !== (y = null === m || void 0 === m ? void 0 : m.index) && void 0 !== y ? y : 0,
+                                length: m[0].length
+                            }
+                    }
+                    _ += d,
+                        i && (_ < 0 || _ >= p.length) && (_ = _ < 0 ? p.length - 1 : 0)
+                }
+            }
+            ,
+            t.findAllText = function (e) {
+                var t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {};
+                e = e.replace(/[$()*+.?[\\\]^{|}]/g, "\\$&");
+                for (var n, r = t.caseSensitive, i = t.wrap, a = t.direction, o = t.start, p = this.withPushedHistory(), s = null !== (n = p.getSections()) && void 0 !== n ? n : [], d = o ? p.getOrderIndex(o) : p.order.length - 1, u = "backward" === a ? 1 : -1, _ = !1, f = d, y = []; ;) {
+                    if (_ && f === d)
+                        return y;
+                    if (_ = !0,
+                        !i && (f < 0 || f >= s.length))
+                        return y;
+                    var g = s[f];
+                    if (g.section.type === c.bA.text) {
+                        var m = g.section.text
+                            , h = (0,
+                                l.Z)(m.matchAll(new RegExp(e, r ? "g" : "gi"))).reverse();
+                        if (h.length > 0) {
+                            var b = !0
+                                , v = !1
+                                , k = void 0;
+                            try {
+                                for (var x, w = h[Symbol.iterator](); !(b = (x = w.next()).done); b = !0) {
+                                    var S, C = x.value;
+                                    y.push({
+                                        section: g,
+                                        offset: null !== (S = null === C || void 0 === C ? void 0 : C.index) && void 0 !== S ? S : 0,
+                                        length: C[0].length
+                                    })
+                                }
+                            } catch (O) {
+                                v = !0,
+                                    k = O
+                            } finally {
+                                try {
+                                    b || null == w.return || w.return()
+                                } finally {
+                                    if (v)
+                                        throw k
+                                }
+                            }
+                        } else
+                            y.push({
+                                section: g,
+                                offset: -1,
+                                length: 0
+                            })
+                    }
+                    f += u,
+                        i && (f < 0 || f >= s.length) && (f = f < 0 ? s.length - 1 : 0)
+                }
+                return y
+            }
+            ,
+            e
+    }();
+
+    msgpackr.addExtension({
+        Class: _,
+        type: 20,
+        write: function (e) {
+            var t = e.toJSON();
+            return {
+                sections: t.sections,
+                order: t.order,
+                history: t.history,
+                dirtySections: t.dirtySections,
+                step: t.step
+            }
+        },
+        read: function (e) {
+            return Object.assign(new _, e)
+        }
+    });
+
+    $(".btn-primary").on("click", () => {
+        var j = JSON.parse($('textarea[name=JsonText]').val());
+        var b = btoa(String.fromCharCode.apply(null, msgpackr.pack(j)));
+        var $elem = $('textarea[name=PackedText]')
+        $elem.parent().removeClass('d-none');
+        $elem.val(b);
+        $('form')[0].submit();
+    })
+</script>
+}
