@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "provider": "jsdelivr",
+      "library": "msgpackr@1.10.1",
+      "destination": "wwwroot/lib/msgpackr/"
+    }
+  ]
+}
