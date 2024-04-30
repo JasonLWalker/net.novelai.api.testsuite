@@ -1,0 +1,36 @@
+﻿@page "{shelfId=}"
+@using net.novelai.api
+@using Newtonsoft.Json.Linq
+@model SampleWebApp.Pages.Examples.GetShelfModel
+@{
+}
+<h1>Shelves</h1>
+<ul>
+    @if (!string.IsNullOrWhiteSpace(Model.ShelfId))
+    {
+        <li><a href="~/Examples/GetShelf">[Back to top]</a></li>
+    }
+    @foreach (var shelf in (Model.Shelves ?? new JToken[] { }))
+    {
+        <li>
+            @{
+                var obj = shelf.SelectToken("$.decodedData.children");
+            }
+            <a href="~/Examples/GetShelf/@shelf.SelectToken("$.id")">@shelf.SelectToken("$.decodedData.title")</a>
+            @if (obj != null)
+            {
+                var stories = obj.Where(o => o.SelectToken("$.type")?.ToString() == "story" && o.SelectToken("$.id") != null).Select(o => o.SelectToken("$.id")?.ToString() ?? "").ToArray();
+                <ul>
+                    @foreach (string storyId in stories)
+                    {
+                        Structs.RemoteStoryMeta story = Model.Stories.FirstOrDefault(o => o.meta.id == storyId);
+                        if (story.storyID != null)
+                        {
+                            <li><a href="~/Examples/GetStory/@story.meta.remoteId">@story.meta.title</a></li>
+                        }
+                    }
+                </ul>
+            }
+        </li>
+    }
+</ul>
