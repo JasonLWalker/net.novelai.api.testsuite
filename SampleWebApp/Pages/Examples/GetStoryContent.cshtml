@@ -1,0 +1,22 @@
+﻿@page "{storyId=}"
+@model SampleWebApp.Pages.Examples.GetStoryContentModel
+@{
+}
+<h1>Stories</h1>
+<div class="row">
+    <div class="col-12">
+        @if (Model.StoryContent == null)
+        {
+            <ul>
+            @foreach (var story in Model.Stories)
+            {
+                <li><a href="~/Examples/GetStoryContent/@story.meta.remoteStoryId">@story.meta.title</a></li>
+            }
+            </ul>
+        }
+        else
+        {
+            <textarea rows="10" class="form-control" readonly>@Html.Raw(Model.StoryContent)</textarea>
+        }
+    </div>
+</div>
