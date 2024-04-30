@@ -3,7 +3,23 @@
 @{
 }
 <form method="post">
-    <label>Prompt:</label>
-    <textarea name="TextInput" class="form-control mb-1" rows="10" >@Model.TextInput</textarea>
+    
+    <div class="row">
+        <div class="col-12">
+            <label>Keystore Key (meta):</label>
+            <select name="MetaKey" class="form-select" asp-items="Model.Keys"><option value="">[Select a key to decrypt, or leave blank to decode]</option></select>
+        </div>
+        <div class="col-12">
+            <label>Prompt:</label>
+            <textarea name="TextInput" class="form-control mb-1" rows="10">@Model.TextInput</textarea>
+        </div>
+        @if (!string.IsNullOrWhiteSpace(Model.TextOutput))
+        {
+            <div class="col-12">
+                <label>Output:</label>
+                <textarea class="form-control mb-1" rows="10" readonly>@Model.TextOutput</textarea>
+            </div>
+        }
+    </div>
     <button class="btn btn-sm btn-primary">Generate Text</button>
 </form>
