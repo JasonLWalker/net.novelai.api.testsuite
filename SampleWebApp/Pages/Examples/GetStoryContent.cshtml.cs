@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using net.novelai.api;
+using net.novelai.api.msgpackr;
 using Newtonsoft.Json.Linq;
 using static System.Formats.Asn1.AsnWriter;
 
@@ -33,23 +34,6 @@ namespace SampleWebApp.Pages.Examples
             else
             {
                 StoryContent = await api.GetStoryContent(storyId);
-                byte[] documentData = Convert.FromBase64String(StoryContent.SelectToken("$.document")?.ToString() ?? "");
-                {
-
-                    try
-                    {
-                        var reader = new NovelAiMsgPackrReader(new MsgUnpackerOptions(){BundleStrings = true, MoreTypes = true, StructuredClone = false});
-                        var o = reader.Unpack(documentData, new MsgUnpackerOptions(){MapsAsObjects = false});
-                        //var o = reader.Value;
-                        if (o is JToken)
-                            StoryContent["decodedDocument"] = (JToken)o;
-                    }
-                    catch
-                    {
-                        // Do nothing
-                    }
-                }
-
             }
             return Page();
         }
