@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using net.novelai.api;
+using net.novelai.api.msgpackr;
 using Newtonsoft.Json;
-using static net.novelai.api.Structs;
 
 namespace SampleWebApp.Pages.Utilities
 {
@@ -30,7 +30,6 @@ namespace SampleWebApp.Pages.Utilities
 
             var unpacker = new MsgPackrUnpack(new MsgUnpackerOptions()
             {
-                //MapsAsObjects = true,
                 UseRecords = false
             });
             var json = unpacker.Unpack(data, null);

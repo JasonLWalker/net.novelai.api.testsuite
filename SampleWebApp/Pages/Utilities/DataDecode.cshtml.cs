@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using net.novelai.api;
+using net.novelai.api.msgpackr;
 using Newtonsoft.Json;
 
 namespace SampleWebApp.Pages.Utilities
@@ -47,7 +48,7 @@ namespace SampleWebApp.Pages.Utilities
             {
                 byte[] data = Convert.FromBase64String(TextInput);
 
-                var unpacker = new NovelAiMsgPackrReader(new MsgUnpackerOptions()
+                var unpacker = new NovelAiMsgUnpacker(new MsgUnpackerOptions()
                 {
                     //MapsAsObjects = true,
                     UseRecords = false
